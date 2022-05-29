@@ -40,6 +40,10 @@ defmodule PentoWeb.WrongLive do
     {:noreply, reset_assigns(socket)}
   end
 
+  def handle_params(_params, _uri, socket) do
+    {:noreply, socket}
+  end
+
   def handle_event("guess", %{"guess" => guess}, socket) do
     winner = String.to_integer(guess) == socket.assigns.number
     score = if winner, do: socket.assigns.score + 1, else: socket.assigns.score - 1
