@@ -1,22 +1,21 @@
 defmodule PentoWeb.WrongLive do
   use Phoenix.LiveView, layout: {PentoWeb.LayoutView, "live.html"}
 
+  alias PentoWeb.Router.Helpers, as: Routes
+
   @number_range 1..10
 
   def mount(_params, _session, socket) do
-    {:ok,
-     assign(socket,
-       score: 0,
-       message: "Make a guess:",
-       time: time(),
-       number: Enum.random(@number_range),
-       winner: false
-     )}
+    socket =
+      socket
+      |> reset_assigns()
+      |> assign(score: 0)
+
+    {:ok, socket}
   end
 
   def render(assigns) do
     ~H"""
-    <h1><%= @number %></h1>
     <h1>Your score: <%= @score %></h1>
     <h2>
       <%= @message %>
@@ -28,18 +27,17 @@ defmodule PentoWeb.WrongLive do
     </h2>
 
     <%= if @winner do %>
-      <h2><%= live_patch("Play Again", to: "/guess") %></h2>
+      <h2>
+        <%= live_patch("Play Again", to: Routes.live_path(@socket, PentoWeb.WrongLive, reset: true)) %>
+      </h2>
     <% end %>
 
     <h2>It's <%= @time %></h2>
     """
   end
 
-  def handle_params(params, uri, socket) do
-    IO.inspect(params, label: "params")
-    IO.inspect(uri, label: "uri")
-    IO.inspect(socket.assigns, label: "socket.assigns")
-    {:noreply, socket}
+  def handle_params(%{"reset" => "true"}, _uri, socket) do
+    {:noreply, reset_assigns(socket)}
   end
 
   def handle_event("guess", %{"guess" => guess}, socket) do
@@ -55,4 +53,17 @@ defmodule PentoWeb.WrongLive do
   end
 
   defp number_range, do: @number_range
+
+  defp generate_number do
+    Enum.random(@number_range)
+  end
+
+  defp reset_assigns(socket) do
+    assign(socket,
+      message: "Make a guess:",
+      time: time(),
+      number: generate_number(),
+      winner: false
+    )
+  end
 end
