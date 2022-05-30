@@ -2,14 +2,18 @@ defmodule PentoWeb.WrongLive do
   use Phoenix.LiveView, layout: {PentoWeb.LayoutView, "live.html"}
 
   alias PentoWeb.Router.Helpers, as: Routes
+  alias Pento.Accounts
 
   @number_range 1..10
 
-  def mount(_params, _session, socket) do
+  def mount(_params, session, socket) do
     socket =
       socket
       |> reset_assigns()
-      |> assign(score: 0)
+      |> assign(
+        score: 0,
+        session_id: session["live_socket_id"]
+      )
 
     {:ok, socket}
   end
@@ -33,6 +37,11 @@ defmodule PentoWeb.WrongLive do
     <% end %>
 
     <h2>It's <%= @time %></h2>
+    <pre>
+
+    <%= @current_user.email %>
+
+    <%= @session_id %> </pre>
     """
   end
 
