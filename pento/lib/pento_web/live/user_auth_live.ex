@@ -2,12 +2,10 @@ defmodule PentoWeb.UserAuthLive do
   import Phoenix.LiveView
   alias Pento.Accounts
 
-  def on_mount(_, params, %{"user_token" => user_token}, socket) do
-    user = Accounts.get_user_by_session_token(user_token)
-
+  def on_mount(_, _params, %{"user_token" => user_token}, socket) do
     socket =
       socket
-      |> assign(:current_user, user)
+      |> assign_new(:current_user, fn -> Accounts.get_user_by_session_token(user_token) end)
 
     if socket.assigns.current_user do
       {:cont, socket}
