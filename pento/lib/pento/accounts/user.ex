@@ -58,7 +58,6 @@ defmodule Pento.Accounts.User do
 
   defp validate_username(changeset) do
     changeset
-    |> IO.inspect(label: "changeset")
     |> validate_required([:username])
     |> validate_length(:username, max: 25)
     |> unsafe_validate_unique(:username, Pento.Repo)
